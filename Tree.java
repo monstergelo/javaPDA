@@ -13,9 +13,10 @@ class Tree
 	private int level;
 	private int solved;
 
-	public Tree(Stack s, char cc, Aturan aturan)
+	public Tree(Stack s, char cc, Aturan aturan, String state)
 	{
 		setStack(s);
+		setState(state);
 		setCC(cc);
 		setAturan(aturan);
 		level = 0;
@@ -24,7 +25,7 @@ class Tree
 
 	public Tree()
 	{
-
+		setSolved(-1);
 	}
 
 	public Tree(int i)
@@ -54,7 +55,8 @@ class Tree
 
 	public void setStack(Stack s)
 	{
-		current_stack = s.clone();
+		if(s != null)
+			current_stack = s.clone();
 	}
 
 	public void setState(String s)

@@ -22,13 +22,18 @@ public class Stack {
         return top == -1;
     }
 
-    public int getTop(){
+    public char getTop(){
         return data[top];
     }
 //==========================================================
     public int getMaks()
     {
         return MAKS;
+    }
+
+    public int getTopIdx()
+    {
+        return top;
     }
 
     public char[] getData()
@@ -59,7 +64,7 @@ public class Stack {
     {
         Stack s = new Stack(getMaks());
         s.setData(getData());
-        s.setTops(getTop());
+        s.setTops(getTopIdx());
         return s;
     }
 

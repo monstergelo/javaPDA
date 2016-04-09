@@ -421,12 +421,12 @@ public class MesinPDA {
             }else{
                 if(!finalState.isEmpty()){
                     if(state.equals(finalState)){
-                        return "Kalimat diterima";
+                        return "Kalimat diterima"+aturan.size();
                     }else{
                         return "[Kalimat] Ditolak: Gagal pada karakter (" + barisSekarang + ", " + kolomSekarang + ") '" + karakterSekarang + "'";
                     }
                 }else{
-                    return "Kalimat diterima";
+                    return "Kalimat diterima"+aturan.size();
                 }
             }
         }
@@ -434,16 +434,19 @@ public class MesinPDA {
 
 //=========================================================================================================================================================
    
-//Queue order;
+ArrayList<Tree> order = new ArrayList<Tree>();
 
 
     public void generateChild(Tree t, String ekspresi)
     {
         for(int in=0; in<aturan.size(); ++in)
         {
-            char cc = ekspresi.charAt(t.getLevel()+1);
-            t.addChild(cc, aturan.get(in), ekspresi.length());
-            //add to
+            if(t.getLevel() < ekspresi.length())
+            {
+                char cc = ekspresi.charAt(t.getLevel());
+                t.addChild(cc, aturan.get(in), ekspresi.length());
+                order.add(t.getChild(in));
+            }
         }
     }
 
@@ -451,6 +454,9 @@ public class MesinPDA {
     {
         if(t.solvedCon() == -1)
         {  
+            System.out.println("wawawawa");
+            System.out.println(t.getState());
+            System.out.println(t.getAturan().getState());
             if((t.getState().equals(t.getAturan().getState())) && (t.getStack().getTop() == t.getAturan().getTopStack())) {
                 if(t.getAturan().getPush().charAt(0) == '-'){
                     t.getStack().pop();
@@ -478,7 +484,9 @@ public class MesinPDA {
     }
 
     public String parseNonDeterministic(String ekspresi){
-        Tree t = new Tree(dStack, ekspresi.charAt(0), null);
+        dStack = new Stack(aturan.size()+1);
+        dStack.push('#');
+        Tree t = new Tree(dStack, ekspresi.charAt(0), null, state);
 
         if(t.getLevel() == ekspresi.length())
         {
@@ -487,40 +495,44 @@ public class MesinPDA {
                 return "Kalimat diterima";
             }
         }
-        else
+        
+        generateChild(t, ekspresi);
+
+        if(order.isEmpty()) //antrian tree kosong
         {
-            generateChild(t, ekspresi);
+            return "Kalimat eror"+t.getLevel();
         }
 
-
-        if(false) //antrian tree kosong
-        {
-            return "Kalimat eror";
-        }
-        return parseNonDeterministic(ekspresi);
+        Tree temp = order.remove(order.size() - 1);
+        return parseNonDeterministic(ekspresi, temp);
     }
 
     public String parseNonDeterministic(String ekspresi, Tree t){
-        solve(t);
-
-        if(t.getLevel() == ekspresi.length())
+        System.out.println(solve(t));
+        if(t.getLevel() == ekspresi.length()) //input habis
         {
-            if(t.solvedCon() == 1)
+            if(t.getState().equals(finalState)) //cek final-State
+            {
+                return "Kalimat diterima";
+            }
+            else if(t.getStack().isEmpty())     //cek stack kosong
             {
                 return "Kalimat diterima";
             }
         }
-        else
+        else if(t.solvedCon() == 1)
         {
             generateChild(t, ekspresi);
         }
 
 
-        if(false) //antrian tree kosong
+        if(order.isEmpty()) //antrian tree kosong
         {
-            return "Kalima eror";
+            return "Kalimat eror "+t.getLevel();
         }
-        return parseNonDeterministic(ekspresi);
+
+        Tree temp = order.remove(order.size() - 1);
+        return parseNonDeterministic(ekspresi, temp);
     }
 
 
@@ -530,9 +542,9 @@ public class MesinPDA {
 
 //=========================================================================================================================================================
     public String getCatatan(){
-        if(catatan.isEmpty())
+       // if(catatan.isEmpty())
             return "Kosong";
 
-        return catatan;
+        //return catatan;
     }
 }
