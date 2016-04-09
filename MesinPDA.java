@@ -441,9 +441,9 @@ ArrayList<Tree> order = new ArrayList<Tree>();
     {
         for(int in=0; in<aturan.size(); ++in)
         {
-            if(t.getLevel() < ekspresi.length())
+            if((t.getLevel()+1) < ekspresi.length())
             {
-                char cc = ekspresi.charAt(t.getLevel());
+                char cc = ekspresi.charAt(t.getLevel()+1);
                 t.addChild(cc, aturan.get(in), ekspresi.length());
                 order.add(t.getChild(in));
             }
@@ -452,12 +452,18 @@ ArrayList<Tree> order = new ArrayList<Tree>();
 
     public int solve(Tree t)
     {
+        System.out.println("wawawa");
         if(t.solvedCon() == -1)
-        {  
+        { 
+            System.out.println("Level: "+t.getLevel());
+            System.out.println(t.getCC());
+            System.out.println(t.getState());
+            System.out.println(t.getStack().getTop());
+
+            System.out.println(t.getAturan().getInput());
+            System.out.println(t.getAturan().getState());
+            System.out.println(t.getAturan().getTopStack());
             if(t.getCC() == t.getAturan().getInput()){
-                System.out.println("wawawawa");
-                System.out.println(t.getState());
-                System.out.println(t.getAturan().getState());
                 if((t.getState().equals(t.getAturan().getState())) && (t.getStack().getTop() == t.getAturan().getTopStack())) {
                     if(t.getAturan().getPush().charAt(0) == '-'){
                         t.getStack().pop();
@@ -483,19 +489,16 @@ ArrayList<Tree> order = new ArrayList<Tree>();
             else {
                 t.setSolved(0);
             }
-            System.out.println(t.getCC());
-            System.out.println(t.getState());
-            System.out.println(t.getStack().ambilStack());
         }
-
+        System.out.println(t.solvedCon());
         return t.solvedCon();
     }
 
     public String parseNonDeterministic(String ekspresi){
-        dStack = new Stack(aturan.size()+1);
+        dStack = new Stack(100);
         dStack.push('#');
-        Tree t = new Tree(dStack, ekspresi.charAt(0), null, state);
-
+        Tree t = new Tree(dStack, ' ', null, state);
+        t.setLevel(-1);
 
         if(t.getLevel() == ekspresi.length())
         {
@@ -517,8 +520,8 @@ ArrayList<Tree> order = new ArrayList<Tree>();
     }
 
     public String parseNonDeterministic(String ekspresi, Tree t){
-        System.out.println(solve(t));
-        if(t.getLevel() == ekspresi.length()) //input habis
+        solve(t);
+        if((t.getLevel()+1) == ekspresi.length()) //input habis
         {
             if(t.getState().equals(finalState)) //cek final-State
             {
