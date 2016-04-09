@@ -454,30 +454,38 @@ ArrayList<Tree> order = new ArrayList<Tree>();
     {
         if(t.solvedCon() == -1)
         {  
-            System.out.println("wawawawa");
-            System.out.println(t.getState());
-            System.out.println(t.getAturan().getState());
-            if((t.getState().equals(t.getAturan().getState())) && (t.getStack().getTop() == t.getAturan().getTopStack())) {
-                if(t.getAturan().getPush().charAt(0) == '-'){
-                    t.getStack().pop();
-                }else{
-                    t.getStack().pop();
-                    String temp = t.getAturan().getPush();
-                    int tempLen = temp.length();
-                    for(int m = 0; m < tempLen; m++){
-                        t.getStack().push(temp.charAt(m));
+            if(t.getCC() == t.getAturan().getInput()){
+                System.out.println("wawawawa");
+                System.out.println(t.getState());
+                System.out.println(t.getAturan().getState());
+                if((t.getState().equals(t.getAturan().getState())) && (t.getStack().getTop() == t.getAturan().getTopStack())) {
+                    if(t.getAturan().getPush().charAt(0) == '-'){
+                        t.getStack().pop();
+                    }else{
+                        t.getStack().pop();
+                        String temp = t.getAturan().getPush();
+                        int tempLen = temp.length();
+                        for(int m = 0; m < tempLen; m++){
+                            t.getStack().push(temp.charAt(m));
+                        }
                     }
-                }
 
-                //catatan += " | Status : " + state;
-                t.setState(t.getAturan().getTo());
-                //catatan += " -> " + state;
-                t.setSolved(1);
+                    //catatan += " | Status : " + state;
+                    t.setState(t.getAturan().getTo());
+                    //catatan += " -> " + state;
+                    t.setSolved(1);
+                }
+                else
+                {
+                    t.setSolved(0);
+                }
             }
-            else
-            {
+            else {
                 t.setSolved(0);
             }
+            System.out.println(t.getCC());
+            System.out.println(t.getState());
+            System.out.println(t.getStack().ambilStack());
         }
 
         return t.solvedCon();
@@ -487,6 +495,7 @@ ArrayList<Tree> order = new ArrayList<Tree>();
         dStack = new Stack(aturan.size()+1);
         dStack.push('#');
         Tree t = new Tree(dStack, ekspresi.charAt(0), null, state);
+
 
         if(t.getLevel() == ekspresi.length())
         {
@@ -515,7 +524,7 @@ ArrayList<Tree> order = new ArrayList<Tree>();
             {
                 return "Kalimat diterima";
             }
-            else if(t.getStack().isEmpty())     //cek stack kosong
+            else if(t.getStack().getTop() == '#')     //cek stack kosong
             {
                 return "Kalimat diterima";
             }
