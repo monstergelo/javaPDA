@@ -12,6 +12,7 @@ class Tree
 	private ArrayList<Tree> child = new ArrayList<Tree>();
 	private int level;
 	private int solved;
+	private int epsilonCount;
 
 	public Tree(Stack s, char cc, Aturan aturan, String state)
 	{
@@ -21,6 +22,7 @@ class Tree
 		setAturan(aturan);
 		level = 0;
 		solved = -1;
+		epsilonCount = 0;
 	}
 
 	public Tree()
@@ -41,6 +43,11 @@ class Tree
 	public void setParent(Tree t)
 	{
 		parent = t;
+	}
+
+	public void setEpsilon(int i)
+	{
+		epsilonCount = i;
 	}
 
 	public void setAturan(Aturan a)
@@ -74,6 +81,11 @@ class Tree
 		return aturan;
 	}
 
+	public int getEpsilon()
+	{
+		return epsilonCount;
+	}
+
 	public char getCC()
 	{
 		return cc;
@@ -102,6 +114,11 @@ class Tree
 	public Tree getChild(int i)
 	{
 		return child.get(i);
+	}
+
+	public void epsilonIcr()
+	{
+		epsilonCount++;
 	}
 
 	public ArrayList<Tree> getChild()

@@ -1,6 +1,9 @@
 
 import java.util.List;
+import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.Queue;
+
 
 /**
  * Created by root on 27/03/16.
@@ -433,8 +436,26 @@ public class MesinPDA {
     }
 
 //=========================================================================================================================================================
-   
+
+int limit = 10;   
 ArrayList<Tree> order = new ArrayList<Tree>();
+Queue<Tree> epsilon_order = new LinkedList<Tree>();
+
+    public Tree nextSolve()
+    {
+        if(!order.isEmpty())
+        {
+            return order.remove(order.size() - 1);
+        }
+        else if(!epsilon_order.isEmpty())
+        {
+            return epsilon_order.remove();
+        }
+        else
+        {
+            return null;
+        }
+    }
 
 
     public void generateChild(Tree t, String ekspresi)
@@ -445,7 +466,17 @@ ArrayList<Tree> order = new ArrayList<Tree>();
             {
                 char cc = ekspresi.charAt(t.getLevel()+1);
                 t.addChild(cc, aturan.get(in), ekspresi.length());
-                order.add(t.getChild(in));
+
+
+                if(aturan.get(in).getInput() == '-')
+                {
+                    order.add(t.getChild(in));
+                }
+                else
+                {
+                    epsilon_order.add(t.getChild(in));
+                }
+                
             }
         }
     }
@@ -463,7 +494,7 @@ ArrayList<Tree> order = new ArrayList<Tree>();
             System.out.println(t.getAturan().getInput());
             System.out.println(t.getAturan().getState());
             System.out.println(t.getAturan().getTopStack());
-            if(t.getCC() == t.getAturan().getInput()){
+            if(t.getCC() == t.getAturan().getInput() && t.getEpsilon() < limit){
                 if((t.getState().equals(t.getAturan().getState())) && (t.getStack().getTop() == t.getAturan().getTopStack())) {
                     if(t.getAturan().getPush().charAt(0) == '-'){
                         t.getStack().pop();
@@ -485,6 +516,32 @@ ArrayList<Tree> order = new ArrayList<Tree>();
                 {
                     t.setSolved(0);
                 }
+            }
+            else if(t.getAturan().getInput() == '-' && t.getEpsilon() < limit) //epsilon
+            {
+                if((t.getState().equals(t.getAturan().getState())) && (t.getStack().getTop() == t.getAturan().getTopStack())) {
+                    if(t.getAturan().getPush().charAt(0) == '-'){
+                        t.getStack().pop();
+                    }else{
+                        t.getStack().pop();
+                        String temp = t.getAturan().getPush();
+                        int tempLen = temp.length();
+                        for(int m = 0; m < tempLen; m++){
+                            t.getStack().push(temp.charAt(m));
+                        }
+                    }
+
+                    //catatan += " | Status : " + state;
+                    t.setState(t.getAturan().getTo());
+                    //catatan += " -> " + state;
+                    t.setSolved(1);
+                }
+                else
+                {
+                    t.setSolved(0);
+                }
+                t.epsilonIcr();
+                t.setLevel(t.getLevel()-1);
             }
             else {
                 t.setSolved(0);
@@ -510,13 +567,12 @@ ArrayList<Tree> order = new ArrayList<Tree>();
         
         generateChild(t, ekspresi);
 
-        if(order.isEmpty()) //antrian tree kosong
+        if(order.isEmpty() && epsilon_order.isEmpty()) //antrian tree kosong
         {
             return "Kalimat eror"+t.getLevel();
         }
 
-        Tree temp = order.remove(order.size() - 1);
-        return parseNonDeterministic(ekspresi, temp);
+        return parseNonDeterministic(ekspresi, nextSolve());
     }
 
     public String parseNonDeterministic(String ekspresi, Tree t){
@@ -538,13 +594,12 @@ ArrayList<Tree> order = new ArrayList<Tree>();
         }
 
 
-        if(order.isEmpty()) //antrian tree kosong
+        if(order.isEmpty() && epsilon_order.isEmpty()) //antrian tree kosong
         {
             return "Kalimat eror "+t.getLevel();
         }
 
-        Tree temp = order.remove(order.size() - 1);
-        return parseNonDeterministic(ekspresi, temp);
+        return parseNonDeterministic(ekspresi, nextSolve());
     }
 
 
