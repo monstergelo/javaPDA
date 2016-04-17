@@ -483,17 +483,17 @@ Queue<Tree> epsilon_order = new LinkedList<Tree>();
 
     public int solve(Tree t)
     {
-        System.out.println("wawawa");
+        catatan += "=================\n";
         if(t.solvedCon() == -1)
         { 
-            System.out.println("Level: "+t.getLevel());
-            System.out.println(t.getCC());
-            System.out.println(t.getState());
-            System.out.println(t.getStack().getTop());
+            catatan += ("Level: "+t.getLevel()+"\n");
+            catatan += (t.getCC()+"\n");
+            catatan += (t.getState()+"\n");
+            catatan += (t.getStack().getTop()+"\n");
 
-            System.out.println(t.getAturan().getInput());
-            System.out.println(t.getAturan().getState());
-            System.out.println(t.getAturan().getTopStack());
+            catatan += (t.getAturan().getInput()+"\n");
+            catatan += (t.getAturan().getState()+"\n");
+            catatan += (t.getAturan().getTopStack()+"\n");
             if(t.getCC() == t.getAturan().getInput() && t.getEpsilon() < limit){
                 if((t.getState().equals(t.getAturan().getState())) && (t.getStack().getTop() == t.getAturan().getTopStack())) {
                     if(t.getAturan().getPush().charAt(0) == '-'){
@@ -531,9 +531,7 @@ Queue<Tree> epsilon_order = new LinkedList<Tree>();
                         }
                     }
 
-                    //catatan += " | Status : " + state;
                     t.setState(t.getAturan().getTo());
-                    //catatan += " -> " + state;
                     t.setSolved(1);
                 }
                 else
@@ -547,7 +545,7 @@ Queue<Tree> epsilon_order = new LinkedList<Tree>();
                 t.setSolved(0);
             }
         }
-        System.out.println(t.solvedCon());
+        catatan += (""+t.solvedCon()+"\n");
         return t.solvedCon();
     }
 
@@ -609,9 +607,9 @@ Queue<Tree> epsilon_order = new LinkedList<Tree>();
 
 //=========================================================================================================================================================
     public String getCatatan(){
-       // if(catatan.isEmpty())
+        if(catatan.isEmpty())
             return "Kosong";
 
-        //return catatan;
+        return catatan;
     }
 }
