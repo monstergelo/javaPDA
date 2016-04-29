@@ -74,6 +74,15 @@ public class MesinPDA {
         return grammarError;
     }
 
+    public boolean cekDeterministic() {
+        boolean isDeterministic = false;
+        for (Aturan rule : aturan) {
+            if (rule.getInput() == '-') {
+                isDeterministic = true;
+            }
+        }
+        return isDeterministic;
+    }
 
     public boolean cekGrammar(String S){
         int len = S.length();
@@ -600,9 +609,26 @@ Queue<Tree> epsilon_order = new LinkedList<Tree>();
         return parseNonDeterministic(ekspresi, nextSolve());
     }
 
-
-
-
+    public void jalan(String _input, String _aturan) {
+        if (cekDeterministic()) {
+            if(cekGrammar(_aturan))
+            {
+                System.out.println(parseDeterministic(_input));
+                //System.out.println(mesin.getCatatan());
+            }else{
+                System.out.println(errorGrammar());
+            }
+        } else {
+            if(cekGrammar(_aturan))
+            {
+                
+            System.out.println(parseNonDeterministic(_input));
+                //System.out.println(mesin.getCatatan());
+            }else{
+                System.out.println(errorGrammar());
+            }
+        }
+    }
 
 
 //=========================================================================================================================================================
